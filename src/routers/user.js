@@ -54,6 +54,15 @@ router.post("/logoutall", auth, async (req, res) => {
     res.status(500).send();
   }
 });
+// Get all users
+router.get("/user", auth, async (req, res) => {
+  try {
+    const users = await User.find({});
+    res.send(users);
+  } catch (e) {
+    res.status(500).send();
+  }
+});
 
 // Update user details
 router.patch("/user/:id", auth, async (req, res) => {
