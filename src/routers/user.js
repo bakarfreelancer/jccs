@@ -2,8 +2,8 @@ const express = require("express");
 const User = require("../models/user");
 const router = new express.Router();
 const auth = require("../middleware/auth");
-const res = require("express/lib/response");
-const { TokenExpiredError } = require("jsonwebtoken");
+// const res = require("express/lib/response");
+// const { TokenExpiredError } = require("jsonwebtoken");
 
 router.post("/register", async (req, res) => {
   const user = new User(req.body);
@@ -59,6 +59,15 @@ router.get("/user", auth, async (req, res) => {
   try {
     const users = await User.find({});
     res.send(users);
+  } catch (e) {
+    res.status(500).send();
+  }
+});
+// Get user by email
+router.get("/user/:email", auth, async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.params.email });
+    res.status(200).send(user);
   } catch (e) {
     res.status(500).send();
   }

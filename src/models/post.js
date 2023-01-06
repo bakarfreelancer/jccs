@@ -15,8 +15,8 @@ const postSchema = new mongoose.Schema({
   image: { type: String },
   date: { type: Date, default: Date.now },
   author: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-  visibility: { type: String, default: "Private" },
-  status: { type: String, default: "Draft" },
+  visibility: { type: String, default: "private" },
+  status: { type: String, default: "draft" },
 });
 
 const Post = mongoose.model("Post", postSchema);
