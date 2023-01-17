@@ -2,8 +2,27 @@ const express = require("express"),
   Post = require("../../models/post"),
   router = express.Router(),
   auth = require("../../middleware/auth");
+upload = require("../../middleware/fileupload");
 
-const LIMIT = 3;
+const LIMIT = 12;
+
+// Add new post
+router.post("/post", auth, upload.single("image"), async (req, res) => {
+  const url = req.protocol + "://" + req.get("host");
+
+  const image = req?.file ? "/uploads/" + req.file.filename : "";
+  const post = new Post({
+    ...req.body,
+    image,
+    author: req.user._id,
+  });
+  try {
+    await post.save();
+    res.status(201).send(post);
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
 
 // Get posts for logged in users
 router.post("/loggedInPosts", auth, async (req, res) => {
@@ -20,7 +39,7 @@ router.post("/loggedInPosts", auth, async (req, res) => {
       }
     ).populate({
       path: "author",
-      select: "firstName lastName",
+      select: "firstName lastName image",
     });
     res.status(200).send(posts);
   } catch (e) {

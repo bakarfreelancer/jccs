@@ -44,6 +44,7 @@ const userSchema = new mongoose.Schema({
   description: {
     type: String,
     trim: true,
+    default: "",
   },
   qualification: [
     {
@@ -51,6 +52,10 @@ const userSchema = new mongoose.Schema({
       year: { type: String, required: true },
     },
   ],
+  image: {
+    type: String,
+    default: "",
+  },
   tokens: [{ token: { type: String, required: true } }],
 });
 
