@@ -2,12 +2,12 @@ const express = require("express"),
   User = require("../../models/user"),
   router = express.Router(),
   auth = require("../../middleware/auth"),
-  upload = require("../../middleware/fileupload");
+  upload = require("../../middleware/fileupload"),
+  bcrypt = require("bcryptjs");
 
 // Update user details
+// TODO: Update the params
 router.patch("/user/:id", auth, upload.single("image"), async (req, res) => {
-  // const url = req.protocol + "://" + req.get("host");
-
   const image = req?.file ? "/uploads/" + req.file.filename : "";
 
   if (image) req.body.image = image;
@@ -28,4 +28,22 @@ router.patch("/user/:id", auth, upload.single("image"), async (req, res) => {
   }
 });
 
+// Update user password
+router.patch("/updatePassword", auth, async (req, res) => {
+  try {
+    // compare passwords
+    const isMatch = await await bcrypt.compare(
+      req.body.oldPassword,
+      req.user.password
+    );
+    if (!isMatch) {
+      throw new Error("Current password is wrong");
+    }
+    req.user.password = req.body.password;
+    const user = await req.user.save();
+    res.send(user);
+  } catch (error) {
+    res.status(401).send(error);
+  }
+});
 module.exports = router;

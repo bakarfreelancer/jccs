@@ -4,11 +4,32 @@ const Post = require("../../models/post"),
   router = express.Router(),
   auth = require("../../middleware/auth");
 
+LIMIT = 12;
 // Get all users
 // TODO: It should be improved
 router.get("/user", auth, async (req, res) => {
   try {
     const users = await User.find({});
+    res.send(users);
+  } catch (e) {
+    res.status(500).send();
+  }
+});
+
+// Get community
+router.get("/community/:page", auth, async (req, res) => {
+  try {
+    const users = await User.find(
+      {
+        active: true,
+      },
+      "firstName lastName image",
+      {
+        skip: LIMIT * req.params.page,
+        limit: LIMIT,
+        sort: { firstName: "ASC" },
+      }
+    );
     res.send(users);
   } catch (e) {
     res.status(500).send();
