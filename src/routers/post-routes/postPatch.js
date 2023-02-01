@@ -1,4 +1,7 @@
-const upload = require("../../middleware/fileupload");
+const {
+  postImgUpload,
+  resizePostImage,
+} = require("../../middleware/post-img-upload");
 
 const express = require("express"),
   Post = require("../../models/post"),
@@ -9,9 +12,10 @@ const express = require("express"),
 router.patch(
   "/post/:id/:authorId",
   auth,
-  upload.single("image"),
+  postImgUpload.single("image"),
+  resizePostImage,
   async (req, res) => {
-    const image = req?.file ? "/uploads/" + req.file.filename : "";
+    const image = req.body.image ? "/uploads/" + req.body.image : "";
     if (image) req.body.image = image;
     const updates = Object.keys(req.body);
     try {

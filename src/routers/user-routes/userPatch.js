@@ -2,31 +2,40 @@ const express = require("express"),
   User = require("../../models/user"),
   router = express.Router(),
   auth = require("../../middleware/auth"),
-  upload = require("../../middleware/fileupload"),
+  {
+    profileUpload,
+    resizeProfileImage,
+  } = require("../../middleware/profile-upload"),
   bcrypt = require("bcryptjs");
 
 // Update user details
 // TODO: Update the params
-router.patch("/user/:id", auth, upload.single("image"), async (req, res) => {
-  const image = req?.file ? "/uploads/" + req.file.filename : "";
+router.patch(
+  "/user/:id",
+  auth,
+  profileUpload.single("image"),
+  resizeProfileImage,
+  async (req, res) => {
+    const image = req.body.image ? "/uploads/" + req.body.image : "";
 
-  if (image) req.body.image = image;
-  if (req.body.qualification)
-    req.body.qualification = JSON.parse(req.body.qualification);
+    if (image) req.body.image = image;
+    if (req.body.qualification)
+      req.body.qualification = JSON.parse(req.body.qualification);
 
-  const updates = Object.keys(req.body);
+    const updates = Object.keys(req.body);
 
-  try {
-    const user = await User.findById(req.params.id);
-    updates.forEach((update) => {
-      user[update] = req.body[update];
-    }),
-      await user.save();
-    res.send(user);
-  } catch (e) {
-    res.status(400).send(e);
+    try {
+      const user = await User.findById(req.params.id);
+      updates.forEach((update) => {
+        user[update] = req.body[update];
+      }),
+        await user.save();
+      res.send(user);
+    } catch (e) {
+      res.status(400).send(e);
+    }
   }
-});
+);
 
 // Update user password
 router.patch("/updatePassword", auth, async (req, res) => {
