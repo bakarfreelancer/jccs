@@ -1,7 +1,7 @@
 const express = require("express");
 require("./db/mongoose");
-
 require("dotenv").config();
+
 const userRouter = require("./routers/user");
 const postRouter = require("./routers/post");
 const feedbackRouter = require("./routers/feedback");
